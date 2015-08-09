@@ -181,12 +181,19 @@ def login_to_reddit(bot_parameters):
 
     """ OAuth Process from
     https://github.com/reddit/reddit/wiki/OAuth2-Quick-Start-Example """
+
     client_auth = requests.auth.HTTPBasicAuth(
         bot_parameters['client_id'], bot_parameters['client_secret'])
     post_data = {"grant_type": "password",
                  "username": bot_parameters['username'],
                  "password": bot_parameters['password']}
     headers = {"User-Agent": USER_AGENT}
+
+    print("Using: ")
+    print("\nClient ID: " + bot_parameters['client_id'] +
+          "\nClient Secret: " + bot_parameters['client_secret'] +
+          "\nUsername: " + bot_parameters['username'] +
+          "\nPassword: " + bot_parameters['password'])
 
     response = requests.post(
         "https://www.reddit.com/api/v1/access_token",
