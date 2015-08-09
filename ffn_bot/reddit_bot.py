@@ -105,11 +105,20 @@ def get_bot_parameters():
     """Parse the command-line arguments."""
     # initialize parser and add options for username and password
     parser = argparse.ArgumentParser()
-    parser.add_argument('-u', '--user',
-                        help='define Reddit login username')
+
+    # OAuth Implementation
+
     parser.add_argument(
-        '-p', '--password',
-        help='define Reddit login password')
+        "-id", "--client_id",
+        help="OAuth Client ID")
+
+    parser.add_argument(
+        "-secret", "--client_secret",
+        help="OAuth Client Secret")
+
+    parser.add_argument(
+        "-uri", "--redirect_uri",
+        help="OAuth Redirect URI")
 
     parser.add_argument(
         '-s', '--subreddits',
@@ -143,8 +152,9 @@ def get_bot_parameters():
     args = parser.parse_args()
 
     return {
-        'user': args.user,
-        'password': args.password,
+        'client_id': args.client_id,
+        'client_secret': args.client_secret,
+        'redirect_uri': args.redirect_uri,
         'user_subreddits': args.subreddits,
         'default': args.default,
         'dry': args.dry,
@@ -160,7 +170,16 @@ def get_bot_parameters():
 def login_to_reddit(bot_parameters):
     """Performs the login for reddit."""
     print("Logging in...")
-    r.login(bot_parameters['user'], bot_parameters['password'])
+    r.set_oauth_app_info(bot_parameters['client_id'],
+                         bot_parameters['client_secret'],
+                         bot_parameters['redirect_uri'])
+    oauth_state = 'uniqueKey'
+    oauth_permissions = "edit flair history privatemessages read save submit"
+    url = r.get_authorize_url(oauth_state, oauth_permissions, True)
+    code = url.rsplit('=', maxsplit=1)
+    print("Authorization URL: " + url)
+    print("Authorization Code: " + code)
+    bot_tools.pause(5, 0) # Debug
     print(Fore.GREEN, "Logged in.", Style.RESET_ALL)
 
 
@@ -198,7 +217,7 @@ def handle_submission(submission, markers=frozenset()):
 def handle_comment(comment, extra_markers=frozenset()):
     logging.debug("Handling comment: " + comment.id)
     if (str(comment.id) not in CHECKED_COMMENTS
-       ) or ("force" in extra_markers):
+            ) or ("force" in extra_markers):
 
         logging.info("Found new comment: " + comment.id)
         markers = parse_context_markers(comment.body)
