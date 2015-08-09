@@ -1,8 +1,11 @@
 import sys
 import argparse
 import logging
+import requests
+import requests.auth
 import praw
 from praw.objects import Submission
+
 
 from ffn_bot.commentlist import CommentList
 from ffn_bot.commentparser import formulate_reply, parse_context_markers
@@ -106,6 +109,14 @@ def get_bot_parameters():
     # initialize parser and add options for username and password
     parser = argparse.ArgumentParser()
 
+    parser.add_argument(
+        "-u", "--username",
+        help="Reddit Username")
+
+    parser.add_argument(
+        "-p", "--password",
+        help="Reddit Password")
+
     # OAuth Implementation
 
     parser.add_argument(
@@ -115,10 +126,6 @@ def get_bot_parameters():
     parser.add_argument(
         "-secret", "--client_secret",
         help="OAuth Client Secret")
-
-    parser.add_argument(
-        "-uri", "--redirect_uri",
-        help="OAuth Redirect URI")
 
     parser.add_argument(
         '-s', '--subreddits',
@@ -152,9 +159,10 @@ def get_bot_parameters():
     args = parser.parse_args()
 
     return {
+        'username': args.username,
+        'password': args.password,
         'client_id': args.client_id,
         'client_secret': args.client_secret,
-        'redirect_uri': args.redirect_uri,
         'user_subreddits': args.subreddits,
         'default': args.default,
         'dry': args.dry,
@@ -170,16 +178,22 @@ def get_bot_parameters():
 def login_to_reddit(bot_parameters):
     """Performs the login for reddit."""
     print("Logging in...")
-    r.set_oauth_app_info(bot_parameters['client_id'],
-                         bot_parameters['client_secret'],
-                         bot_parameters['redirect_uri'])
-    oauth_state = 'uniqueKey'
-    oauth_permissions = "edit flair history privatemessages read save submit"
-    url = r.get_authorize_url(oauth_state, oauth_permissions, True)
-    code = url.rsplit('=', maxsplit=1)
-    print("Authorization URL: " + url)
-    print("Authorization Code: " + code)
-    bot_tools.pause(5, 0) # Debug
+
+    """ OAuth Process from
+    https://github.com/reddit/reddit/wiki/OAuth2-Quick-Start-Example """
+    client_auth = requests.auth.HTTPBasicAuth(
+        bot_parameters['client_id'], bot_parameters['client_secret'])
+    post_data = {"grant_type": "password",
+                 "username": bot_parameters['username'],
+                 "password": bot_parameters['password']}
+    headers = {"User-Agent": USER_AGENT}
+
+    response = requests.post(
+        "https://www.reddit.com/api/v1/access_token",
+        auth=client_auth, data=post_data, headers=headers)
+    response.json()
+
+    bot_tools.pause(5, 0)  # Debug
     print(Fore.GREEN, "Logged in.", Style.RESET_ALL)
 
 
@@ -216,8 +230,7 @@ def handle_submission(submission, markers=frozenset()):
 
 def handle_comment(comment, extra_markers=frozenset()):
     logging.debug("Handling comment: " + comment.id)
-    if (str(comment.id) not in CHECKED_COMMENTS
-            ) or ("force" in extra_markers):
+    if (str(comment.id) not in CHECKED_COMMENTS) or ("force" in extra_markers):
 
         logging.info("Found new comment: " + comment.id)
         markers = parse_context_markers(comment.body)
