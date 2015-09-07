@@ -197,7 +197,7 @@ def handle_submission(submission, markers=frozenset()):
 def handle_comment(comment, extra_markers=frozenset()):
     logging.debug("Handling comment: " + comment.id)
     if (str(comment.id) not in CHECKED_COMMENTS
-        ) or ("force" in extra_markers):
+            ) or ("force" in extra_markers):
 
         logging.info("Found new comment: " + comment.id)
         markers = parse_context_markers(comment.body)
@@ -235,7 +235,18 @@ def handle_comment(comment, extra_markers=frozenset()):
                 logging.info(
                     "(Refresh) Original comment with requests is invalid.")
                 return
-            reply_list = comment_with_requests.replies
+
+            if comment_with_requests is Submission:
+                logging.info(
+                    "Running refresh on submission " + str(comment_with_requests.id))
+                reply_list = Submission.comments
+            else if comment_with_requests is Comment:
+                logging.info(
+                    "Running refresh on comment " + str(comment_with_requests.id))
+                reply_list = comment_with_requests.replies
+            else:
+                logging.error("Can't refresh!")
+                return
 
             if reply_list is not None:
                 logging.info("(Refresh) Finding replies to delete.")
