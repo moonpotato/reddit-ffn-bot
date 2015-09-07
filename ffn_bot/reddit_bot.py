@@ -231,20 +231,21 @@ def handle_comment(comment, extra_markers=frozenset()):
         if "refresh" in markers:
             logging.info("Refresh requested by " + comment.id)
             comment_with_requests = r.get_info(thing_id=comment.parent_id)
+            logging.info("Proceeding to refresh " + type(comment_with_requests) + " with id " + comment_with_requests.id)
             if comment_with_requests.author is None:
                 logging.error(
                     "(Refresh) Original comment with requests is invalid.")
                 return
             if comment_with_requests.author is "FanfictionBot":
-                logging.info("(Refresh) Refresh requested on a bot comment (" + comment_with_requests.id ").")
+                logging.info("(Refresh) Refresh requested on a bot comment (" + comment_with_requests.id + ").")
                 comment_with_requests = r.get_info(thing_id=comment_with_requests.parent_id)
                 logging.info("          Refresh request being pushed to parent " + comment_with_requests.id)
 
-            if comment_with_requests.type() is praw.objects.Submission:
+            if isinstance(comment_with_requests, praw.objects.Submission):
                 logging.info(
                     "Running refresh on submission " + str(comment_with_requests.id))
                 reply_list = Submission.comments
-            elif comment_with_requests.type() is praw.objects.Comment:
+            elif isinstance(comment_with_requests, praw.objects.Comment):
                 logging.info(
                     "Running refresh on comment " + str(comment_with_requests.id))
                 reply_list = comment_with_requests.replies
