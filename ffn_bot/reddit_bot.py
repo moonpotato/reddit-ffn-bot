@@ -290,12 +290,12 @@ def handle_comment(comment, extra_markers=frozenset()):
                     "(Refresh) No bot replies have been made. Continuing...")
             CHECKED_COMMENTS.add(str(comment.id))
 
-            if isinstance(comment_with_requests, praw.objects.Submission):
-                logging.info("(Refresh) Re-handling submission " + comment_with_requests.id)
-                handle_submission(comment_with_requests, frozenset(["force"]))
-            elif isinstance(comment_with_requests, praw.objects.Comment):
+            if isinstance(comment_with_requests, praw.objects.Comment):
                 logging.info("(Refresh) Re-handling comment " + comment_with_requests.id)
                 handle_comment(comment_with_requests, frozenset(["force"]))
+            elif isinstance(comment_with_requests, praw.objects.Submission):
+                logging.info("(Refresh) Re-handling submission " + comment_with_requests.id)
+                handle_submission(comment_with_requests, frozenset(["force"]))
             return
 
         try:
