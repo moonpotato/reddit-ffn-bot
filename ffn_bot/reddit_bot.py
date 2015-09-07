@@ -202,7 +202,7 @@ def handle_comment(comment, extra_markers=frozenset()):
         markers = parse_context_markers(comment.body)
         markers |= extra_markers
         if "ignore" in markers:
-            logging.info("Comment forcefully ignored: " + comment.id)
+            # logging.info("Comment forcefully ignored: " + comment.id)
             return
         else:
             logging.info("Found new comment: " + comment.id)
