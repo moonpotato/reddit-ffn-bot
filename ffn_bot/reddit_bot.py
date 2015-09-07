@@ -253,7 +253,9 @@ def handle_comment(comment, extra_markers=frozenset()):
                 logging.info("          Refresh request being pushed to parent " + comment_with_requests.id)
 
             if isinstance(comment_with_requests, praw.objects.Comment):
+                logging.info("REQUEST ID IS " + comment_with_requests.id)
                 comment_with_requests = r.get_submission(comment_with_requests.permalink)
+                logging.info("REQUEST ID IS " + comment_with_requests.id)
                 logging.info(
                     "(Refresh) Running refresh on COMMENT " + str(comment_with_requests.id))
                 logging.info("(Refresh) Appending replies to deletion check list: " + ", ".join(str(c.id) for c in comment_with_requests.replies))
