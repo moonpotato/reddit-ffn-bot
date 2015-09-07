@@ -247,13 +247,13 @@ def handle_comment(comment, extra_markers=frozenset()):
                     "(Refresh) Running refresh on submission " + str(comment_with_requests.id))
 
                 reply_list = []
-                unfiltered_reply_list = praw.helpers.flatten_tree(Submission.comments)
+                unfiltered_reply_list = praw.helpers.flatten_tree(comment_with_requests.comments)
                 for reply in unfiltered_reply_list:
                     # TODO: Make it so FanfictionBot does not have to be hardcoded
                     if (reply.parent_id == comment_with_requests.id) and (reply.author == "FanfictionBot"):
                         logging.error("(Refresh) Appending root-level comment " + reply.id + " to deletion list." )
                         reply_list.append(reply)
-                        
+
             elif isinstance(comment_with_requests, praw.objects.Comment):
                 logging.info(
                     "(Refresh) Running refresh on comment " + str(comment_with_requests.id))
