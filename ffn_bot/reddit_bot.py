@@ -199,12 +199,13 @@ def handle_comment(comment, extra_markers=frozenset()):
     if (str(comment.id) not in CHECKED_COMMENTS
             ) or ("force" in extra_markers):
 
-        logging.info("Found new comment: " + comment.id)
         markers = parse_context_markers(comment.body)
         markers |= extra_markers
         if "ignore" in markers:
             logging.info("Comment forcefully ignored: " + comment.id)
             return
+        else:
+            logging.info("Found new comment: " + comment.id)
 
         if "parent" in markers:
             if comment.is_root:
