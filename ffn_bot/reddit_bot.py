@@ -259,9 +259,10 @@ def handle_comment(comment, extra_markers=frozenset()):
                 unfiltered_delete_list = comment_with_requests.comments
                 delete_list = []
                 for comment in unfiltered_delete_list:
-                    if (comment.author.name == "FanfictionBot"):
-                        delete_list.append(comment)
-                        print("Found root-level bot comment " + comment.id)
+                    if comment.author is not None:
+                        if (comment.author.name == "FanfictionBot"):
+                            delete_list.append(comment)
+                            print("Found root-level bot comment " + comment.id)
 
             elif isinstance(comment_with_requests, praw.objects.Comment):
                 logging.info(
