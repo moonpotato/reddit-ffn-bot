@@ -236,16 +236,16 @@ def handle_comment(comment, extra_markers=frozenset()):
                     "(Refresh) Original comment with requests is invalid.")
                 return
 
-            if comment_with_requests is praw.objects.Submission:
+            if comment_with_requests.type() is praw.objects.Submission:
                 logging.info(
                     "Running refresh on submission " + str(comment_with_requests.id))
                 reply_list = Submission.comments
-            elif comment_with_requests is praw.objects.Comment:
+            elif comment_with_requests.type() is praw.objects.Comment:
                 logging.info(
                     "Running refresh on comment " + str(comment_with_requests.id))
                 reply_list = comment_with_requests.replies
             else:
-                logging.error(comment_with_requests)
+                logging.error(comment_with_requests.type())
                 logging.error("Can't refresh!")
                 bot_tools.pause(5, 0)
                 return
