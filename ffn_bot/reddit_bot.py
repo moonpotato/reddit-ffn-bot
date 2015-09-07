@@ -244,17 +244,18 @@ def handle_comment(comment, extra_markers=frozenset()):
 
             if isinstance(comment_with_requests, praw.objects.Submission):
                 logging.info(
-                    "(Refresh) Running refresh on submission " + str(comment_with_requests.id))
+                    "(Refresh) Running refresh on SUBMISSION " + str(comment_with_requests.id))
 
                 reply_list = []
                 for comment in comment_with_requests.comments:
                     if isinstance(comment, praw.objects.Comment):
-                        logging.info("(Refresh) Appending root-level comment " + comment.id + " to refresh list.")
+                        logging.info("(Refresh) Appending root-level comment " + comment.id + " to deletion-check list.")
                         reply_list.append(comment)
 
             elif isinstance(comment_with_requests, praw.objects.Comment):
                 logging.info(
-                    "(Refresh) Running refresh on comment " + str(comment_with_requests.id))
+                    "(Refresh) Running refresh on COMMENT " + str(comment_with_requests.id))
+                logging.info("(Refresh) Appending replies to deletion check list: " + comment_with_requests.replies)
                 reply_list = comment_with_requests.replies
             else:
                 logging.error("(Refresh) Can't refresh " + comment_with_requests.type().__name__)
