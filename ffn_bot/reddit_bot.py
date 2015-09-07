@@ -245,7 +245,9 @@ def handle_comment(comment, extra_markers=frozenset()):
                     "Running refresh on comment " + str(comment_with_requests.id))
                 reply_list = comment_with_requests.replies
             else:
+                logging.error(comment_with_requests)
                 logging.error("Can't refresh!")
+                bot_tools.pause(5, 0)
                 return
 
             if reply_list is not None:
