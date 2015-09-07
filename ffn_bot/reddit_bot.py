@@ -199,7 +199,6 @@ def handle_comment(comment, extra_markers=frozenset()):
     if (str(comment.id) not in CHECKED_COMMENTS
             ) or ("force" in extra_markers):
 
-        CHECKED_COMMENTS.add(str(comment.id))
         markers = parse_context_markers(comment.body)
         markers |= extra_markers
         if "ignore" in markers:
@@ -216,6 +215,7 @@ def handle_comment(comment, extra_markers=frozenset()):
             handle(item, {"directlinks", "submissionlink", "force"})
 
         if "delete" in markers and (comment.id not in CHECKED_COMMENTS):
+            CHECKED_COMMENTS.add(str(comment.id))
             logging.info("Delete requested by " + comment.id)
             if not (comment.is_root):
                 parent_comment = r.get_info(thing_id=comment.parent_id)
@@ -231,6 +231,7 @@ def handle_comment(comment, extra_markers=frozenset()):
                 logging.error("Delete requested by invalid comment!")
 
         if "refresh" in markers and (str(comment.id) not in CHECKED_COMMENTS):
+            CHECKED_COMMENTS.add(str(comment.id))
             logging.info("(Refresh) Refresh requested by " + comment.id)
 
             comment_with_requests = get_full(comment.parent_id) # Get the full comment or submission
