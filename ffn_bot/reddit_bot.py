@@ -253,6 +253,7 @@ def handle_comment(comment, extra_markers=frozenset()):
                 logging.info("          Refresh request being pushed to parent " + comment_with_requests.id)
 
             if isinstance(comment_with_requests, praw.objects.Submission):
+                comment_with_requests = r.get_submission(comment_with_requests.permalink)
                 logging.info(
                     "(Refresh) Running refresh on SUBMISSION " + str(comment_with_requests.id))
                 comment_with_requests.replace_more_comments(limit=None, threshold=0)
@@ -265,6 +266,7 @@ def handle_comment(comment, extra_markers=frozenset()):
                             print("Found root-level bot comment " + comment.id)
 
             elif isinstance(comment_with_requests, praw.objects.Comment):
+                comment_with_requests = r.get_submission(comment_with_requests.permalink)
                 logging.info(
                     "(Refresh) Running refresh on COMMENT " + str(comment_with_requests.id))
                 logging.info("(Refresh) Appending replies to deletion check list: " + ", ".join(str(c.id) for c in comment_with_requests.replies))
