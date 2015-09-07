@@ -231,7 +231,7 @@ def handle_comment(comment, extra_markers=frozenset()):
         if "refresh" in markers:
             logging.info("Refresh requested by " + comment.id)
             comment_with_requests = r.get_info(thing_id=comment.parent_id)
-            logging.info("Proceeding to refresh " + type(comment_with_requests) + " with id " + comment_with_requests.id)
+            logging.info("Proceeding to refresh " + type(comment_with_requests).__name__ + " with id " + comment_with_requests.id)
             if comment_with_requests.author is None:
                 logging.error(
                     "(Refresh) Original comment with requests is invalid.")
@@ -250,8 +250,7 @@ def handle_comment(comment, extra_markers=frozenset()):
                     "Running refresh on comment " + str(comment_with_requests.id))
                 reply_list = comment_with_requests.replies
             else:
-                logging.error(comment_with_requests.type())
-                logging.error("Can't refresh!")
+                logging.error("(Refresh) Can't refresh " + comment_with_requests.type().__name__)
                 bot_tools.pause(5, 0)
                 return
 
