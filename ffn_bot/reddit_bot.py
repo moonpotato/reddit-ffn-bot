@@ -214,7 +214,8 @@ def handle_comment(comment, extra_markers=frozenset()):
                 item = r.get_info(thing_id=comment.parent_id)
             handle(item, {"directlinks", "submissionlink", "force"})
 
-        if "delete" in markers:
+        if "delete" in markers and (comment.id not in CHECKED_COMMENTS):
+            CHECKED_COMMENTS.add(str(comment.id))
             logging.info("Delete requested by " + comment.id)
             if not (comment.is_root):
                 parent_comment = r.get_info(thing_id=comment.parent_id)
@@ -229,7 +230,9 @@ def handle_comment(comment, extra_markers=frozenset()):
             else:
                 logging.error("Delete requested by invalid comment!")
 
-        if "refresh" in markers:
+        if "refresh" in markers and (str(comment.id) not in CHECKED_COMMENTS):
+            CHECKED_COMMENTS.add(str(comment.id))
+
             logging.info("(Refresh) Refresh requested by " + comment.id)
             comment_with_requests = r.get_info(thing_id=comment.parent_id)
             # PRAW doesn't return replies in a comment object retrieved with get_info; we must do this:
@@ -243,7 +246,10 @@ def handle_comment(comment, extra_markers=frozenset()):
             if comment_with_requests.author is "FanfictionBot":
                 logging.info("(Refresh) Refresh requested on a bot comment (" + comment_with_requests.id + ").")
                 comment_with_requests = r.get_info(thing_id=comment_with_requests.parent_id)
-                comment_with_requests = r.get_submission(comment_with_requests.permalink).comments[0]
+                comment_with_requests = r.get_submission(comment_with_requests.permalink)
+                if comment_with_requests.author is None:
+                    logging.error("(Refresh) Parent of bot comment is invalid.")
+                    return
                 logging.info("          Refresh request being pushed to parent " + comment_with_requests.id)
 
             if isinstance(comment_with_requests, praw.objects.Submission):
