@@ -255,7 +255,7 @@ def handle_comment(comment, extra_markers=frozenset()):
             elif isinstance(comment_with_requests, praw.objects.Comment):
                 logging.info(
                     "(Refresh) Running refresh on COMMENT " + str(comment_with_requests.id))
-                logging.info("(Refresh) Appending replies to deletion check list: " + comment_with_requests.replies)
+                logging.info("(Refresh) Appending replies to deletion check list: " + ", ".join(str(c.id) for c in comment_with_requests.replies))
                 reply_list = comment_with_requests.replies
             else:
                 logging.error("(Refresh) Can't refresh " + comment_with_requests.type().__name__)
