@@ -231,6 +231,8 @@ def handle_comment(comment, extra_markers=frozenset()):
         if "refresh" in markers:
             logging.info("(Refresh) Refresh requested by " + comment.id)
             comment_with_requests = r.get_info(thing_id=comment.parent_id)
+            # PRAW doesn't return replies in a comment object retrieved with get_info; we must do this:
+            comment_with_requests = r.get_submission(comment_with_requests.permalink).comments[0]
             logging.info("(Refresh) Proceeding to refresh " + type(comment_with_requests).__name__ + " with id " + comment_with_requests.id)
             if comment_with_requests.author is None:
                 logging.error(
@@ -240,6 +242,7 @@ def handle_comment(comment, extra_markers=frozenset()):
             if comment_with_requests.author is "FanfictionBot":
                 logging.info("(Refresh) Refresh requested on a bot comment (" + comment_with_requests.id + ").")
                 comment_with_requests = r.get_info(thing_id=comment_with_requests.parent_id)
+                comment_with_requests = r.get_submission(comment_with_requests.permalink).comments[0]
                 logging.info("          Refresh request being pushed to parent " + comment_with_requests.id)
 
             if isinstance(comment_with_requests, praw.objects.Submission):
