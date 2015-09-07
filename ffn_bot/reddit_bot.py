@@ -233,7 +233,7 @@ def handle_comment(comment, extra_markers=frozenset()):
             logging.info("(Refresh) Refresh requested by " + comment.id)
             comment_with_requests = r.get_info(thing_id=comment.parent_id)
             # PRAW doesn't return replies in a comment object retrieved with get_info; we must do this:
-            comment_with_requests = r.get_submission(comment_with_requests.permalink).comments[0]
+            comment_with_requests = r.get_submission(comment_with_requests.permalink)
             logging.info("(Refresh) Proceeding to refresh " + type(comment_with_requests).__name__ + " with id " + comment_with_requests.id)
             if comment_with_requests.author is None:
                 logging.error(
