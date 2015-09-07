@@ -249,8 +249,7 @@ def handle_comment(comment, extra_markers=frozenset()):
                 reply_list = []
                 unfiltered_reply_list = praw.helpers.flatten_tree(comment_with_requests.comments)
                 for reply in unfiltered_reply_list:
-                    # TODO: Make it so FanfictionBot does not have to be hardcoded
-                    if (reply.parent_id == comment_with_requests.id) and (reply.author == "FanfictionBot"):
+                    if (reply.parent_id == comment_with_requests.id):
                         logging.error("(Refresh) Appending root-level comment " + reply.id + " to deletion list." )
                         reply_list.append(reply)
 
@@ -267,7 +266,8 @@ def handle_comment(comment, extra_markers=frozenset()):
                 logging.info("(Refresh) Finding replies to delete.")
                 for reply in reply_list:
                     if reply.author is not None:
-                        if (reply.author == "FanfictionBot"):
+                        # TODO: Make it so FanfictionBot does not have to be hardcoded
+                        if (reply.author.name == "FanfictionBot"):
                             logging.error(
                                 "(Refresh) Deleting bot comment " + reply.id)
                             reply.delete()
