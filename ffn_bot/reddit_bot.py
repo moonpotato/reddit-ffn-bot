@@ -255,26 +255,30 @@ def handle_comment(comment, extra_markers=frozenset()):
             if isinstance(comment_with_requests, praw.objects.Submission):
                 logging.info(
                     "(Refresh) Running refresh on SUBMISSION " + str(comment_with_requests.id))
+                comment_with_requests.replace_more_comments(limit=None, threshold=0)
+                unfiltered_delete_list = comment_with_requests.comments
 
-                reply_list = []
-                for comment in comment_with_requests.comments:
-                    if isinstance(comment, praw.objects.Comment):
-                        logging.info("(Refresh) Appending root-level comment " + comment.id + " to deletion-check list.")
-                        reply_list.append(comment)
+                delete_list = None
+                for comment in unfiltered_delete_list:
+                    logging.info("Comparing comment parent to request ID " + comment_with_requests.id)
+                    if (comment.parent_id == comment_with_requests.id):
+                        logging.info("(Refresh) Adding root-level comment " + comment.id + " to deletion-check list.")
+                    else:
+                        logging.info("(Refresh) Did not add root-level comment " + comment.id + " to deletion check-list.")
 
             elif isinstance(comment_with_requests, praw.objects.Comment):
                 logging.info(
                     "(Refresh) Running refresh on COMMENT " + str(comment_with_requests.id))
                 logging.info("(Refresh) Appending replies to deletion check list: " + ", ".join(str(c.id) for c in comment_with_requests.replies))
-                reply_list = comment_with_requests.replies
+                delete_list = comment_with_requests.replies
             else:
                 logging.error("(Refresh) Can't refresh " + comment_with_requests.type().__name__)
                 bot_tools.pause(5, 0)
                 return
 
-            if reply_list is not None:
+            if delete_list is not None:
                 logging.info("(Refresh) Finding replies to delete.")
-                for reply in reply_list:
+                for reply in delete_list:
                     if reply.author is not None:
                         # TODO: Make it so FanfictionBot does not have to be hardcoded
                         if (reply.author.name == "FanfictionBot"):
