@@ -240,7 +240,7 @@ def handle_comment(comment, extra_markers=frozenset()):
                 logging.info(
                     "Running refresh on submission " + str(comment_with_requests.id))
                 reply_list = Submission.comments
-            else if comment_with_requests is Comment:
+            elif comment_with_requests is Comment:
                 logging.info(
                     "Running refresh on comment " + str(comment_with_requests.id))
                 reply_list = comment_with_requests.replies
