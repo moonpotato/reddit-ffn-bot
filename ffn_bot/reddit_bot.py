@@ -256,15 +256,12 @@ def handle_comment(comment, extra_markers=frozenset()):
                 logging.info(
                     "(Refresh) Running refresh on SUBMISSION " + str(comment_with_requests.id))
                 comment_with_requests.replace_more_comments(limit=None, threshold=0)
-                unfiltered_delete_list = praw.helpers.flatten_tree(comment_with_requests.comments)
-                delete_list = None
+                unfiltered_delete_list = comment_with_requests.comments
+                delete_list = []
                 for comment in unfiltered_delete_list:
-                    logging.info("Comparing comment parent" + comment.parent_id +  "to request ID " + comment_with_requests.id)
-                    if (comment.parent_id == comment_with_requests.id):
-                        logging.info("(Refresh) Adding root-level comment " + comment.id + " to deletion-check list.")
-                        delete_list.add(comment)
-                    else:
-                        logging.info("(Refresh) Did not add comment " + comment.id + " to deletion check-list.")
+                    if (comment.author.name == "FanfictionBot"):
+                        delete_list.append(comment)
+                        print("Found root-level bot comment " + comment.id)
 
             elif isinstance(comment_with_requests, praw.objects.Comment):
                 logging.info(
