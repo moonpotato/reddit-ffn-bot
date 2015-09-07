@@ -247,11 +247,10 @@ def handle_comment(comment, extra_markers=frozenset()):
                     "(Refresh) Running refresh on submission " + str(comment_with_requests.id))
 
                 reply_list = []
-                unfiltered_reply_list = praw.helpers.flatten_tree(comment_with_requests.comments)
-                for reply in unfiltered_reply_list:
-                    if (reply.parent_id == comment_with_requests.id):
-                        logging.error("(Refresh) Appending root-level comment " + reply.id + " to deletion list." )
-                        reply_list.append(reply)
+                for comment in comment_with_requests.comments:
+                    if isinstance(comment, praw.objects.Comment):
+                        logging.info("(Refresh) Appending root-level comment " + comment.id + " to refresh list.")
+                        reply_list.append(comment)
 
             elif isinstance(comment_with_requests, praw.objects.Comment):
                 logging.info(
