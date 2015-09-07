@@ -232,9 +232,13 @@ def handle_comment(comment, extra_markers=frozenset()):
             logging.info("Refresh requested by " + comment.id)
             comment_with_requests = r.get_info(thing_id=comment.parent_id)
             if comment_with_requests.author is None:
-                logging.info(
+                logging.error(
                     "(Refresh) Original comment with requests is invalid.")
                 return
+            if comment_with_requests.author is "FanfictionBot":
+                logging.info("(Refresh) Refresh requested on a bot comment (" + comment_with_requests.id ").")
+                comment_with_requests = r.get_info(thing_id=comment_with_requests.parent_id)
+                logging.info("          Refresh request being pushed to parent " + comment_with_requests.id)
 
             if comment_with_requests.type() is praw.objects.Submission:
                 logging.info(
