@@ -229,13 +229,14 @@ def handle_comment(comment, extra_markers=frozenset()):
                 logging.error("Delete requested by invalid comment!")
 
         if "refresh" in markers:
-            logging.info("Refresh requested by " + comment.id)
+            logging.info("(Refresh) Refresh requested by " + comment.id)
             comment_with_requests = r.get_info(thing_id=comment.parent_id)
-            logging.info("Proceeding to refresh " + type(comment_with_requests).__name__ + " with id " + comment_with_requests.id)
+            logging.info("(Refresh) Proceeding to refresh " + type(comment_with_requests).__name__ + " with id " + comment_with_requests.id)
             if comment_with_requests.author is None:
                 logging.error(
                     "(Refresh) Original comment with requests is invalid.")
                 return
+            # TODO: Make it so FanfictionBot does not have to be hardcoded
             if comment_with_requests.author is "FanfictionBot":
                 logging.info("(Refresh) Refresh requested on a bot comment (" + comment_with_requests.id + ").")
                 comment_with_requests = r.get_info(thing_id=comment_with_requests.parent_id)
@@ -243,11 +244,19 @@ def handle_comment(comment, extra_markers=frozenset()):
 
             if isinstance(comment_with_requests, praw.objects.Submission):
                 logging.info(
-                    "Running refresh on submission " + str(comment_with_requests.id))
-                reply_list = Submission.comments
+                    "(Refresh) Running refresh on submission " + str(comment_with_requests.id))
+
+                reply_list = []
+                unfiltered_reply_list = praw.helpers.flatten_tree(Submission.comments)
+                for reply in unfiltered_reply_list:
+                    # TODO: Make it so FanfictionBot does not have to be hardcoded
+                    if (reply.parent_id == comment_with_requests.id) and (reply.author == "FanfictionBot"):
+                        logging.error("(Refresh) Appending root-level comment " + reply.id + " to deletion list." )
+                        reply_list.append(reply)
+                        
             elif isinstance(comment_with_requests, praw.objects.Comment):
                 logging.info(
-                    "Running refresh on comment " + str(comment_with_requests.id))
+                    "(Refresh) Running refresh on comment " + str(comment_with_requests.id))
                 reply_list = comment_with_requests.replies
             else:
                 logging.error("(Refresh) Can't refresh " + comment_with_requests.type().__name__)
