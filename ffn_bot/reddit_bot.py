@@ -259,7 +259,7 @@ def handle_comment(comment, extra_markers=frozenset()):
                 unfiltered_delete_list = praw.helpers.flatten_tree(comment_with_requests.comments)
                 delete_list = None
                 for comment in unfiltered_delete_list:
-                    logging.info("Comparing comment parent to request ID " + comment_with_requests.id)
+                    logging.info("Comparing comment parent" + comment.parent_id +  "to request ID " + comment_with_requests.id)
                     if (comment.parent_id == comment_with_requests.id):
                         logging.info("(Refresh) Adding root-level comment " + comment.id + " to deletion-check list.")
                         delete_list.add(comment)
