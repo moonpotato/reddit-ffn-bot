@@ -242,8 +242,9 @@ def handle_comment(comment, extra_markers=frozenset()):
             # If ffnbot!refresh is called on an actual bot reply, then go up one level to find the requesting comment
             if comment_with_requests.author.name == "FanfictionBot":
                 logging.info("(Refresh) Refresh requested on a bot comment (" + comment_with_requests.id + ").")
-                comment_with_requests = get_full(comment.parent_id) # Retrieve the requesting parent submission or comment
-
+                # Retrieve the requesting parent submission or comment
+                comment_with_requests = get_full(comment_with_requests.parent_id) 
+                
                 if not valid_comment(comment_with_requests): # If the requesting comment has been deleted, abort
                     logging.error("(Refresh) Parent of bot comment is invalid.")
                     return
