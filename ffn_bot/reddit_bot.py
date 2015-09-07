@@ -305,7 +305,7 @@ def get_full(comment_id):
     requested_comment = r.get_info(thing_id=comment_id)
     if isinstance(requested_comment, praw.objects.Comment):
         # PRAW doesn't return replies in a comment object retrieved with get_info; we must do this:
-        requested_comment = r.get_submission(requested_comment.permalink)[0]
+        requested_comment = r.get_submission(requested_comment.permalink).comments[0]
     elif isinstance(requested_comment, praw.objects.Submission):
         requested_comment = r.get_submission(requested_comment.permalink)
         requested_comment.replace_more_comments(limit=None, threshold=0)
