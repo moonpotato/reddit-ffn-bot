@@ -21,7 +21,7 @@ from ffn_bot.reddit.reddit_environment import RedditBotEnvironment
 
 __author__ = 'tusing'
 __authors__ = ['tusing', 'MikroMan', 'StuxSoftware']
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 
 USER_AGENT = "Python:FanfictionComment:" + __version__ + " (by tusing, StuxSoftware, and MikroMan)"
 r = praw.Reddit(USER_AGENT)
