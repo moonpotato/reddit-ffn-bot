@@ -112,12 +112,8 @@ class ModerativeCommands(object, metaclass=ModerativeCommandsMeta):
 
     @command("parent", allow_on_force=True)
     def on_parent(self, comment, markers):
-        item = get_parent(self.reddit, comment, allow_submission)
-        self.on_refresh(
-            command,
-            markers,
-            {"directlinks", "submissionlink"}
-        )
+        self.on_refresh(comment, markers,
+            {"directlinks", "submissionlink"})
 
     @command("refresh")
     def on_refresh(self, comment, markers, additional=frozenset()):
