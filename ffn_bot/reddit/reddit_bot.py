@@ -206,6 +206,9 @@ def parse_submission_text(submission, extra_markers=frozenset()):
 
 def make_reply(body, id, reply_func, markers=None, additions=()):
     """Makes a reply for the given comment."""
+    logging.debug("Attempting a reply to: ")
+    logging.debug(body)
+
     try:
         _reply = list(formulate_reply(body, ENVIRONMENT, markers, additions))
     except StoryLimitExceeded:
