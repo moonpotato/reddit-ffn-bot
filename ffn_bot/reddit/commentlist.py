@@ -77,7 +77,7 @@ class CommentList(object):
     def _load(self):
         with self.lock:
             self.clist = CommentSet(max_age=self.age)
-            self.logger.info("Loading comment list...")
+            self.logger.debug("Loading comment list...")
             with contextlib.suppress(FileNotFoundError):
                 with open(self.filename, "r") as f:
                     for line in f:
