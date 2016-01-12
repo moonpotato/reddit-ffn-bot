@@ -61,7 +61,7 @@ def _run_forever(argv):
         # Exit on sys.exit and keyboard interrupts.
         except KeyboardInterrupt as e:
             # Exit the program unclean.
-            bot_tools.print_exception(e, level=logging.INFO)
+            bot_tools.print_exception(e, level=logging.debug)
             save_things()
             os._exit(0)
         except SystemExit as e:
@@ -113,10 +113,10 @@ def init_global_flags(bot_parameters):
     with open(bot_parameters["footer"], "r") as f:
         FOOTER = f.read()
         FOOTER = FOOTER.format(version=__version__)
-        logging.info("==========================================")
+        logging.debug("==========================================")
         for line in FOOTER.split("\n"):
-            logging.info(line)
-        logging.info("==========================================")
+            logging.debug(line)
+        logging.debug("==========================================")
 
     MOD_COMMANDS = ModerativeCommands(r, CHECKED_COMMENTS, reply, handle)
 
@@ -131,11 +131,11 @@ def init_global_flags(bot_parameters):
 
 def reply(post, message, reply_func=None):
     if DRY_RUN:
-        logging.debug("Not sending reply...")
-        logging.debug("\n" + message)
+        logging.info("Not sending reply...")
+        logging.info("\n" + message)
         return
 
-    logging.debug("Sending reply...")
+    logging.info("Sending reply...")
     if reply_func is None:
         if isinstance(post, Comment):
             reply_func = post.reply
@@ -148,12 +148,12 @@ send_reply = reply
 
 def _handle_submission(submission, markers=frozenset()):
     if (submission not in CHECKED_COMMENTS) or ("force" in markers):
-        logging.debug("Found new submission: " + submission.id)
+        logging.info("Found new submission: " + submission.id)
         parse_submission_text(submission, markers)
 
 
 def _handle_comment(comment, extra_markers=frozenset()):
-    logging.debug("Handling comment: " + comment.id)
+    logging.info("Handling comment " + comment.id)
 
     if (comment not in CHECKED_COMMENTS) or ("force" in extra_markers):
         markers = parse_context_markers(comment.body)
@@ -161,7 +161,7 @@ def _handle_comment(comment, extra_markers=frozenset()):
         if "ignore" in markers:
             return
         else:
-            logging.debug("Found new comment: " + comment.id)
+            logging.info("Found new comment: " + comment.id)
 
         submission = comment.submission
         submission.refresh()
@@ -221,7 +221,7 @@ def make_reply(body, id, reply_func, markers=None, additions=()):
             ),
             reply_func
         )
-        logging.debug("User requested too many fics...")
+        logging.info("User requested too many fics...")
         bot_tools.pause(2, 0)
         return
     except GroupLimitExceeded:
@@ -236,7 +236,7 @@ def make_reply(body, id, reply_func, markers=None, additions=()):
             ),
             reply_func
         )
-        logging.debug("User requests too many groups...")
+        logging.info("User requests too many groups...")
         bot_tools.pause(4,0)
         return
 
@@ -251,4 +251,4 @@ def make_reply(body, id, reply_func, markers=None, additions=()):
         bot_tools.pause(0, 30)
         print('Continuing to parse submissions...')
     else:
-        logging.debug("No reply conditions met.")
+        logging.info("No reply conditions met.")

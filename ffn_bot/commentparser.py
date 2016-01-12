@@ -154,7 +154,7 @@ def create_story(part, env, markers):
         try:
             part.load()
         except site.StoryDoesNotExist:
-            get_logger().debug("Found nonexistent story: " + part.get_url())
+            get_logger().info("Found nonexistent story: " + part.get_url())
             return ""
 
     env.stats(part, markers)
@@ -176,7 +176,7 @@ def expel_stories(stories, env, markers):
         part = create_story(part, env, markers)
 
         if length + len(str(part)) >= MAX_REPLY_LENGTH:
-            get_logger().debug("Reached maximal reply length. Evicting.")
+            get_logger().info("Reached maximal reply length. Evicting.")
             yield "".join(str(p) for p in cur_part)
             cur_part = []
             length = 0
@@ -212,7 +212,7 @@ def expel_groups(groups, env, markers):
                 break
             cur_part.append(string)
 
-        get_logger().debug("Evicting group reply.")
+        get_logger().info("Evicting group reply.")
         # Evict post.
         yield "".join(str(p) for p in cur_part)
 
@@ -256,7 +256,7 @@ def _parse_comment_requests(requests, context):
             continue
 
         # Do a little bit of logging.
-        get_logger().debug("Requests for '%s': %r" % (site.name, queries))
+        get_logger().info("Requests for '%s': %r" % (site.name, queries))
         # Begin processing the requests.
         for pos, query in queries:
             for comment in site.from_requests((query,), context):

@@ -85,7 +85,7 @@ class ModerativeCommands(object, metaclass=ModerativeCommandsMeta):
                 if not func._on_force and forced:
                     continue
 
-                self.logger.debug("Moderation: " + repr(func))
+                self.logger.info("Moderation: " + repr(func))
                 logger = logging.getLogger("moderation." + str(key))
 
                 # Make sure we have a list.
@@ -117,16 +117,16 @@ class ModerativeCommands(object, metaclass=ModerativeCommandsMeta):
 
     @command("refresh")
     def on_refresh(self, comment, markers, additional=frozenset()):
-        self.logger.debug("Refresh requested by " + comment.id)
+        self.logger.info("Refresh requested by " + comment.id)
 
         # Get the full comment or submission
         comment_with_requests = get_full(
             self.reddit, get_parent(self.reddit, comment, True))
-        self.logger.debug("Refreshing on " + comment_with_requests.fullname)
+        self.logger.info("Refreshing on " + comment_with_requests.fullname)
 
         if comment_with_requests.author is not None:
             if comment_with_requests.author.name == self.reddit.user.name:
-                self.logger.debug(
+                self.logger.info(
                     "Refresh requested on a bot comment (" + comment_with_requests.id + ").")
                 # Retrieve the requesting parent submission or comment
                 comment_with_requests = get_full(self.reddit,
@@ -139,10 +139,10 @@ class ModerativeCommands(object, metaclass=ModerativeCommandsMeta):
                     self.logger.warning("Parent of bot comment is invalid.")
                     return
 
-                self.logger.debug(
+                self.logger.info(
                     "Refresh request pushed to parent " + comment_with_requests.fullname)
 
-        self.logger.debug(
+        self.logger.info(
             "Running refresh on:" + comment_with_requests.fullname)
         if isinstance(comment_with_requests, praw.objects.Comment):
             delete_list = comment_with_requests.replies
@@ -154,13 +154,13 @@ class ModerativeCommands(object, metaclass=ModerativeCommandsMeta):
             return
 
         if delete_list:
-            self.logger.debug("Finding replies to delete.")
+            self.logger.info("Finding replies to delete.")
             for reply in delete_list:
                 if valid_comment(reply) and reply.author.name == self.reddit.user.name:
-                    self.logger.debug("Deleting bot comment " + reply.id)
+                    self.logger.info("Deleting bot comment " + reply.id)
                     reply.delete()
         else:
-            self.logger.debug("No bot replies have been deleted. Continuing...")
+            self.logger.info("No bot replies have been deleted. Continuing...")
 
         # Since parent redirects to this method now, modify the force marker
         # before doing anything.
@@ -170,13 +170,13 @@ class ModerativeCommands(object, metaclass=ModerativeCommandsMeta):
 
     @command("delete")
     def on_delete(self, comment, markers):
-        self.logger.debug("Delete requested by " + comment.id)
+        self.logger.info("Delete requested by " + comment.id)
         if not comment.is_root:
             parent_comment = get_parent(self.reddit, comment)
 
             # Make sure we don't delete submissions.
             if not valid_comment(parent_comment):
-                self.logger.debug("Cannot delete deleted comments :)")
+                self.logger.info("Cannot delete deleted comments :)")
                 return
 
             # Make sure the delete comment is actually authorized
@@ -187,12 +187,12 @@ class ModerativeCommands(object, metaclass=ModerativeCommandsMeta):
             # option of contacting a mod to remove the post.
             grand_parent = get_parent(self.reddit, parent_comment, True)
             if not valid_comment(grand_parent):
-                self.logger.debug("Cannot verify authorization.")
+                self.logger.info("Cannot verify authorization.")
                 self.reply(comment, construct_message("AUTH_FAIL"))
                 return
 
             if grand_parent.author.name != comment.author.name:
-                self.logger.debug("Comment not authorized.")
+                self.logger.info("Comment not authorized.")
                 self.reply(comment, construct_message("NO_AUTH"))
                 return
 
@@ -202,5 +202,5 @@ class ModerativeCommands(object, metaclass=ModerativeCommandsMeta):
                 return
 
             # And only then, we will try to delete the comment.
-            self.logger.debug("Deleting comment " + parent_comment.id)
+            self.logger.info("Deleting comment " + parent_comment.id)
             parent_comment.delete()

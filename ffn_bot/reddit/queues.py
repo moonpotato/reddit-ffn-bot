@@ -88,7 +88,7 @@ class QueueThread(Thread):
     def run(self):
         self.running = True
         while self.running:
-            self.logger.debug("Querying Reddit...")
+            self.logger.info("Querying Reddit...")
             for fetcher in self.fetchers:
                 self._fetch(fetcher)
             for i in range(10):

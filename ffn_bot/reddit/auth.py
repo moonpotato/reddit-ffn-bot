@@ -16,14 +16,14 @@ class Authenticator(object):
     def authenticate(self, settings):
         self.stop()
 
-        self.logger.debug("Authenticating with method: " + settings["type"])
+        self.logger.info("Authenticating with method: " + settings["type"])
         self._previous_method = getattr(
             self, "login_" + settings["type"], self._unknown
         )(settings)
 
     def stop(self):
         if self._previous_method:
-            self.logger.debug("Stopping previous authentication method.")
+            self.logger.info("Stopping previous authentication method.")
             self._previous_method.stop()
 
     def _unknown(self, _, settings):
@@ -92,13 +92,13 @@ class OAuthAuthenticator(BaseAuthenticator, threading.Thread):
             self.reddit,
             configfile=settings["config"]
         )
-        self.logger.debug("Got refresh token...")
+        self.logger.info("Got refresh token...")
         self.oauth.refresh()
         self.refresh_time = settings.get("refresh-time", 45*60)
         self.start()
 
     def stop(self):
-        self.logger.debug("Stopping refresh mechanism.")
+        self.logger.info("Stopping refresh mechanism.")
         self.stopped.set()
         self.join()
 
@@ -109,7 +109,7 @@ class OAuthAuthenticator(BaseAuthenticator, threading.Thread):
                 if self.stopped.is_set():
                     return
 
-            self.logger.debug("Refreshing token.")
+            self.logger.info("Refreshing token.")
             self.oauth.refresh()
 
 

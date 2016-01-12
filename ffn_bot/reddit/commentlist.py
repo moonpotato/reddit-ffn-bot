@@ -118,7 +118,7 @@ class CommentList(object):
 
             self.clist.clean_up()
 
-            self.logger.info("Saving comment list...")
+            self.logger.debug("Saving comment list...")
             with open(self.filename, "w") as f:
                 for genid, item in self.clist:
                     f.write(str(genid) + " " + item + "\n")
