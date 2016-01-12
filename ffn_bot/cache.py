@@ -131,7 +131,7 @@ class RequestCache(object):
         return self.cache.set("%s:%s"%(type,query), data)
 
     def get_page(self, page, throttle=0, **kwargs):
-        self.logger.info("LOADING: " + str(page))
+        self.logger.debug("LOADING: " + str(page))
         try:
             return self.hit_cache("get", page)
         except KeyError:
@@ -153,7 +153,7 @@ class RequestCache(object):
         return result
 
     def search(self, query, site=None):
-        self.logger.info("SEARCHING: " + str(query))
+        self.logger.debug("SEARCHING: " + str(query))
         try:
             return self.hit_cache("search", query)
         except KeyError:

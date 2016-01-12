@@ -80,7 +80,7 @@ class ArchiveOfOurOwn(Site):
         try:
             link = self.find_link(request, context)
         except IOError as e:
-            logging.info("FF not found: %s" % request)
+            logging.debug("FF not found: %s" % request)
             return
 
         if link is None:

@@ -131,8 +131,8 @@ def init_global_flags(bot_parameters):
 
 def reply(post, message, reply_func=None):
     if DRY_RUN:
-        logging.info("Not sending reply...")
-        logging.info("\n" + message)
+        logging.debug("Not sending reply...")
+        logging.debug("\n" + message)
         return
 
     logging.debug("Sending reply...")
@@ -148,7 +148,7 @@ send_reply = reply
 
 def _handle_submission(submission, markers=frozenset()):
     if (submission not in CHECKED_COMMENTS) or ("force" in markers):
-        logging.info("Found new submission: " + submission.id)
+        logging.debug("Found new submission: " + submission.id)
         parse_submission_text(submission, markers)
 
 
@@ -161,7 +161,7 @@ def _handle_comment(comment, extra_markers=frozenset()):
         if "ignore" in markers:
             return
         else:
-            logging.info("Found new comment: " + comment.id)
+            logging.debug("Found new comment: " + comment.id)
 
         submission = comment.submission
         submission.refresh()
@@ -221,7 +221,7 @@ def make_reply(body, id, reply_func, markers=None, additions=()):
             ),
             reply_func
         )
-        logging.info("User requested too many fics...")
+        logging.debug("User requested too many fics...")
         bot_tools.pause(2, 0)
         return
     except GroupLimitExceeded:
@@ -236,7 +236,7 @@ def make_reply(body, id, reply_func, markers=None, additions=()):
             ),
             reply_func
         )
-        logging.info("User requests too many groups...")
+        logging.debug("User requests too many groups...")
         bot_tools.pause(4,0)
         return
 
@@ -251,4 +251,4 @@ def make_reply(body, id, reply_func, markers=None, additions=()):
         bot_tools.pause(0, 30)
         print('Continuing to parse submissions...')
     else:
-        logging.info("No reply conditions met.")
+        logging.debug("No reply conditions met.")

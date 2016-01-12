@@ -187,12 +187,12 @@ class ModerativeCommands(object, metaclass=ModerativeCommandsMeta):
             # option of contacting a mod to remove the post.
             grand_parent = get_parent(self.reddit, parent_comment, True)
             if not valid_comment(grand_parent):
-                self.logger.info("Cannot verify authorization.")
+                self.logger.debug("Cannot verify authorization.")
                 self.reply(comment, construct_message("AUTH_FAIL"))
                 return
 
             if grand_parent.author.name != comment.author.name:
-                self.logger.info("Comment not authorized.")
+                self.logger.debug("Comment not authorized.")
                 self.reply(comment, construct_message("NO_AUTH"))
                 return
 
@@ -202,5 +202,5 @@ class ModerativeCommands(object, metaclass=ModerativeCommandsMeta):
                 return
 
             # And only then, we will try to delete the comment.
-            self.logger.info("Deleting comment " + parent_comment.id)
+            self.logger.debug("Deleting comment " + parent_comment.id)
             parent_comment.delete()
