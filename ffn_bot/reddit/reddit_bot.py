@@ -24,12 +24,13 @@ __author__ = 'tusing'
 __authors__ = ['tusing', 'MikroMan', 'StuxSoftware']
 __version__ = "1.4.0"
 
-USER_AGENT = "Python:FanfictionComment:" + __version__ + " (by tusing, StuxSoftware, and MikroMan)"
+USER_AGENT = "Python:FanfictionComment:" + __version__ + \
+    " (by tusing, StuxSoftware, and MikroMan)"
 
 # Start PRAW Multiprocess by running "praw-multiprocess"
 handler = MultiprocessHandler()
 r = praw.Reddit(USER_AGENT, handler=handler)
-r._use_oauth = False # A temporary band-aid.
+r._use_oauth = False  # A temporary band-aid.
 
 SUBREDDIT_LIST = set()
 CHECKED_COMMENTS = None
@@ -47,6 +48,7 @@ DEBUG = False
 TRACKER = None
 ENVIRONMENT = None
 MOD_COMMANDS = None
+
 
 def save_things():
     if CHECKED_COMMENTS is not None:
@@ -129,7 +131,7 @@ def init_global_flags(bot_parameters):
 
     settings = get_settings()
     tracker_settings = settings["bot"].get("tracker", {
-        "filename":"tracker.json", "autosave_interval":100
+        "filename": "tracker.json", "autosave_interval": 100
     })
 
     TRACKER = FicCounter(**tracker_settings)
@@ -176,7 +178,6 @@ def _handle_comment(comment, extra_markers=frozenset()):
         if "disable" in submission_markers:
             return
 
-
         if MOD_COMMANDS.handle_moderation(comment, markers):
             make_reply(comment.body, comment.id, comment.reply, markers)
 
@@ -213,8 +214,8 @@ def parse_submission_text(submission, extra_markers=frozenset()):
 
 def make_reply(body, id, reply_func, markers=None, additions=()):
     """Makes a reply for the given comment."""
-    logging.info("Attempting a reply to: ")
-    logging.info(body)
+    logging.debug("Attempting a reply to: ")
+    logging.debug(body)
 
     try:
         _reply = list(formulate_reply(body, ENVIRONMENT, markers, additions))
@@ -247,7 +248,7 @@ def make_reply(body, id, reply_func, markers=None, additions=()):
             reply_func
         )
         logging.info("User requests too many groups...")
-        bot_tools.pause(4,0)
+        bot_tools.pause(4, 0)
         return
 
     raw_reply = "".join(_reply)

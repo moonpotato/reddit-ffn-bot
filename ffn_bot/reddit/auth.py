@@ -6,6 +6,7 @@ from praw.errors import InvalidUserPass
 
 from ffn_bot.bot_tools import print_exception
 
+
 class Authenticator(object):
 
     def __init__(self, reddit):
@@ -36,7 +37,7 @@ def authenticator(name):
             result = cls(self)
             result.login(settings)
             return result
-        setattr(Authenticator, "login_"+name, runner)
+        setattr(Authenticator, "login_" + name, runner)
         return cls
     return _decorator
 
@@ -94,7 +95,7 @@ class OAuthAuthenticator(BaseAuthenticator, threading.Thread):
         )
         self.logger.info("Got refresh token...")
         self.oauth.refresh()
-        self.refresh_time = settings.get("refresh-time", 45*60)
+        self.refresh_time = settings.get("refresh-time", 45 * 60)
         self.start()
 
     def stop(self):

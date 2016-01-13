@@ -15,14 +15,13 @@ class CommentSet(object):
         self.current_generation = set()
         self.last_generations = [set() for i in range(max_age)]
 
-
     def add_to_generation(self, genid, item):
         if genid == 0:
             generation = self.current_generation
         elif genid > len(self.last_generations):
             return
         else:
-            generation = self.last_generations[genid-1]
+            generation = self.last_generations[genid - 1]
 
         generation.add(item)
         self._stored_items.add(item)
@@ -45,7 +44,7 @@ class CommentSet(object):
             for item in self.current_generation:
                 yield 0, item
                 seen.add(item)
-            for genid, generation in enumerate(self.last_generations,1):
+            for genid, generation in enumerate(self.last_generations, 1):
                 for item in generation:
                     if item in seen:
                         continue
@@ -84,7 +83,7 @@ class CommentList(object):
                         data = line.strip()
                         data = self.convert_v1_v2(data)
                         gen, data = data.split(" ")
-                        self.clist.add_to_generation(int(gen)+1, data)
+                        self.clist.add_to_generation(int(gen) + 1, data)
 
     def convert_v1_v2(self, data):
         data = data.split(" ")
@@ -96,20 +95,21 @@ class CommentList(object):
 
         # Convert from old format into the new format.
         if data.startswith("SUBMISSION"):
-            self.logger.debug("Converting %s into new format"%data)
+            self.logger.debug("Converting %s into new format" % data)
             data = data.replace("SUBMISSION_", "t3_", 1)
         elif not data.startswith("t") and data[2] != "_":
-            self.logger.debug("Converting %s into new format"%data)
+            self.logger.debug("Converting %s into new format" % data)
             data = "t1_" + data
 
         return str(gen) + " " + data
 
     def _save(self):
         try:
-            if ((self.save_rotation+1)%self.COMMENT_STORAGE)==0:
+            if ((self.save_rotation + 1) % self.COMMENT_STORAGE) == 0:
                 self.save()
         finally:
-            self.save_rotation = (self.save_rotation+1)%self.COMMENT_STORAGE
+            self.save_rotation = (
+                self.save_rotation + 1) % self.COMMENT_STORAGE
 
     def save(self):
         with self.lock:
