@@ -171,7 +171,7 @@ def _handle_comment(comment, extra_markers=frozenset()):
             return
         else:
             logging.info("Found new comment: " + comment.id)
-
+        r.use_oauth = False
         submission = comment.submission
         submission.refresh()
         submission_markers = parse_context_markers(submission.selftext)

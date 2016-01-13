@@ -156,6 +156,7 @@ class QueueStrategy(object):
                 "count": self.count
             }
 
+            self.r._use_oauth = False
             queue.add(*func(limit=self.limit, params=params))
 
         return _run
