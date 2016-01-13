@@ -6,6 +6,7 @@ from threading import RLock, Thread
 from praw.objects import RedditContentObject
 
 from ffn_bot.reddit.commentlist import CommentList
+from ffn_bot.reddit.auth import Authenticator
 
 
 class ThreadsafeUniqueQueue(object):
@@ -153,7 +154,5 @@ class QueueStrategy(object):
                 "count": self.count
             }
 
-            self.reddit._use_oauth = False
             queue.add(*func(limit=self.limit, params=params))
-            self.reddit._use_oauth = True
         return _run
