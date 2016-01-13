@@ -127,8 +127,8 @@ class QueueStrategy(object):
         self.subreddit = subreddit
         self.count = 0
         self.limit = limit
-        self._get_submissions = self._stream(subreddit.get_new, r)
-        self._get_comments = self._stream(subreddit.get_comments, r)
+        self._get_submissions = self._stream(subreddit.get_new)
+        self._get_comments = self._stream(subreddit.get_comments)
 
     def run(self):
         self.queue.register_converter(
