@@ -60,6 +60,7 @@ class QueueThread(Thread):
 
     def __init__(self, r, comments, logger):
         super(QueueThread, self).__init__()
+        self.r = r
         self.daemon = True
         self.queue = ThreadsafeUniqueQueue()
         self.running = False
@@ -147,7 +148,7 @@ class QueueStrategy(object):
             self.queue.shutdown()
             self.logger.debug("Queue closed.")
 
-    def _stream(self, func, r):
+    def _stream(self, func):
         def _run(queue):
             self.count = (self.count+1) % 200
 
