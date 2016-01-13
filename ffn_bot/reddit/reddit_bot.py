@@ -90,6 +90,7 @@ def main(argv):
     init_global_flags(bot_parameters)
 
     QueueStrategy(
+        r,
         r.get_subreddit("+".join(SUBREDDIT_LIST)),
         CHECKED_COMMENTS,
         handle,

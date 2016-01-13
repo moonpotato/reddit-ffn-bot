@@ -6,7 +6,6 @@ from threading import RLock, Thread
 from praw.objects import RedditContentObject
 
 from ffn_bot.reddit.commentlist import CommentList
-from ffn_bot.reddit.auth import Authenticator
 
 
 class ThreadsafeUniqueQueue(object):
@@ -118,15 +117,16 @@ class QueueThread(Thread):
 
 class QueueStrategy(object):
 
-    def __init__(self, subreddit, comments, handler, limit):
+    def __init__(self, r, subreddit, comments, handler, limit):
+        self.r = r
         self.logger = logging.getLogger("Queue")
         self.queue = QueueThread(comments, self.logger)
         self.handler = handler
         self.subreddit = subreddit
         self.count = 0
         self.limit = limit
-        self._get_submissions = self._stream(subreddit.get_new)
-        self._get_comments = self._stream(subreddit.get_comments)
+        self._get_submissions = self._stream(subreddit.get_new, r)
+        self._get_comments = self._stream(subreddit.get_comments, r)
 
     def run(self):
         self.queue.register_converter(
@@ -146,7 +146,7 @@ class QueueStrategy(object):
             self.queue.shutdown()
             self.logger.debug("Queue closed.")
 
-    def _stream(self, func):
+    def _stream(self, func, r):
         def _run(queue):
             self.count = (self.count+1) % 200
 
@@ -154,5 +154,8 @@ class QueueStrategy(object):
                 "count": self.count
             }
 
+            r._use_oauth = False
             queue.add(*func(limit=self.limit, params=params))
+            r._use_oauth = True
+
         return _run

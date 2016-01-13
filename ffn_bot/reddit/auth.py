@@ -112,6 +112,12 @@ class OAuthAuthenticator(BaseAuthenticator, threading.Thread):
             self.logger.info("Refreshing token.")
             self.oauth.refresh()
 
+    def use_oauth_false(self):
+        self.reddit._use_oauth = False
+
+    def use_oauth_true(self):
+        self.reddit._use_oauth = True
+
 
 _authenticator = None
 
