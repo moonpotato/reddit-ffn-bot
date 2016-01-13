@@ -206,8 +206,8 @@ def parse_submission_text(submission, extra_markers=frozenset()):
 
 def make_reply(body, id, reply_func, markers=None, additions=()):
     """Makes a reply for the given comment."""
-    logging.debug("Attempting a reply to: ")
-    logging.debug(body)
+    logging.info("Attempting a reply to: ")
+    logging.info(body)
 
     try:
         _reply = list(formulate_reply(body, ENVIRONMENT, markers, additions))
@@ -254,4 +254,4 @@ def make_reply(body, id, reply_func, markers=None, additions=()):
         bot_tools.pause(0, 30)
         print('Continuing to parse submissions...')
     else:
-        logging.info("No reply conditions met.")
+        logging.info("No reply conditions met for " + id)
