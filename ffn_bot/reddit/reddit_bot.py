@@ -29,6 +29,7 @@ USER_AGENT = "Python:FanfictionComment:" + __version__ + " (by tusing, StuxSoftw
 # Start PRAW Multiprocess by running "praw-multiprocess"
 handler = MultiprocessHandler()
 r = praw.Reddit(USER_AGENT, handler=handler)
+r._use_oauth = False # A temporary band-aid.
 
 SUBREDDIT_LIST = set()
 CHECKED_COMMENTS = None
