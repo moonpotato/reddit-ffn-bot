@@ -153,5 +153,7 @@ class QueueStrategy(object):
                 "count": self.count
             }
 
+            self.reddit._use_oauth = False
             queue.add(*func(limit=self.limit, params=params))
+            self.reddit._use_oauth = True
         return _run

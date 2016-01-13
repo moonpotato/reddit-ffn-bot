@@ -3,6 +3,7 @@ import sys
 import logging
 import praw
 from praw.objects import Submission, Comment
+from praw.handlers import MultiprocessHandler
 
 from ffn_bot import cache
 from ffn_bot import bot_tools
@@ -24,7 +25,11 @@ __authors__ = ['tusing', 'MikroMan', 'StuxSoftware']
 __version__ = "1.4.0"
 
 USER_AGENT = "Python:FanfictionComment:" + __version__ + " (by tusing, StuxSoftware, and MikroMan)"
-r = praw.Reddit(USER_AGENT)
+
+# Start PRAW Multiprocess by running "praw-multiprocess"
+handler = MultiprocessHandler()
+r = praw.Reddit(USER_AGENT, handler=handler)
+
 SUBREDDIT_LIST = set()
 CHECKED_COMMENTS = None
 
